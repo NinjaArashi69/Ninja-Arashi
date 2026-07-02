@@ -284,7 +284,7 @@
             const data = await response.json();
             const ip = data.ip;
 
-            const day = Math.floor(Date.now() / 172800000);
+            const day = Math.floor(Date.now() / 86400000);
             const ipSeed = parseInt(ip.replace(/\./g, '').substring(0, 6)); 
             let seed = ipSeed + day + 2026; 
             
