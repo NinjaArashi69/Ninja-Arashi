@@ -86,7 +86,7 @@
             padding: 0 16px;
         }
 
-        .step-indicator{
+        .step-indicator {
             display: flex;
             align-items: center;
             gap: 8px;
@@ -94,7 +94,7 @@
             color: var(--accent-muted);
         }
 
-        .circle{
+        .circle {
             width: 28px;
             height: 28px;
             border: 2px solid var(--accent-muted);
@@ -107,21 +107,21 @@
             background: transparent;
         }
 
-        .circle.active{
+        .circle.active {
             border-color: var(--accent);
             color: var(--accent);
             background: rgba(0, 255, 127, 0.1);
             box-shadow: 0 0 15px rgba(0, 255, 127, 0.2);
         }
 
-        .line{
+        .line {
             flex-grow: 1;
             height: 2px;
             background: var(--accent-muted);
             margin: 0 8px;
         }
 
-        .card{
+        .card {
             background: var(--card-dark);
             border: 1px solid var(--accent-muted);
             border-radius: 28px;
@@ -131,28 +131,28 @@
             margin-bottom: 32px;
         }
 
-        .card h2{
+        .card h2 {
             font-size: 20px;
             color: var(--accent);
             margin-bottom: 14px;
             font-weight: bold;
         }
 
-        .card-p{
+        .card-p {
             color: var(--accent-muted);
             font-size: 13px;
             line-height: 1.6;
             margin-bottom: 24px;
         }
 
-        .features{
+        .features {
             display: flex;
             flex-direction: column;
             gap: 12px;
             margin-bottom: 28px;
         }
 
-        .feature{
+        .feature {
             display: flex;
             align-items: flex-start;
             gap: 10px;
@@ -161,7 +161,7 @@
             line-height: 1.5;
         }
 
-        .feature::before{
+        .feature::before {
             content: "➜";
             color: var(--accent);
             font-weight: bold;
@@ -169,7 +169,7 @@
             margin-top: 1px;
         }
 
-        .warning{
+        .warning {
             background: var(--warning-bg);
             border: 1px solid var(--warning-border);
             border-radius: 14px;
@@ -179,29 +179,30 @@
             margin-bottom: 28px;
         }
 
-        .warning-icon{
+        .warning-icon {
             color: var(--warning-text);
             font-size: 20px;
             min-width: 24px;
         }
 
-        .warning-content{
+        .warning-content {
             text-align: left;
         }
 
-        .warning-title{
+        .warning-title {
             color: var(--warning-text);
             font-weight: bold;
             font-size: 13px;
             margin-bottom: 4px;
         }
 
-        .warning-text{
+        .warning-text {
             color: var(--accent-muted);
             font-size: 12px;
             line-height: 1.4;
         }
-        .btn{
+
+        .btn {
             width: 100%;
             padding: 16px;
             background: var(--accent);
@@ -216,14 +217,20 @@
             letter-spacing: 1px;
         }
 
-        .btn:hover{
+        .btn:hover {
             transform: scale(1.04);
             box-shadow: 0 0 20px rgba(0, 255, 127, 0.4);
         }
 
         .btn:active { transform: scale(0.98); }
 
-        .footer{
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: scale(1);
+        }
+
+        .footer {
             margin-top: 32px;
             color: var(--accent-muted);
             font-size: 9px;
@@ -231,14 +238,14 @@
             text-transform: uppercase;
         }
 
-        @keyframes fadeIn{
+        @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         .card { animation: fadeIn 0.8s ease-out 0.2s both; }
 
-        @media (max-width: 480px){
+        @media (max-width: 480px) {
             h1 { font-size: 28px; }
             .card { padding: 24px 18px; }
             .btn { padding: 14px; font-size: 14px; }
@@ -269,7 +276,7 @@
 
     <div class="card">
         <h2>Complete Step 1</h2>
-        <p class="card-p">Click the button below to continue. You'll be redirected and can return to generate your key.</p>
+        <p class="card-p">Click the button below to continue. Your key will be valid for 24 hours and locked to your device.</p>
 
         <div class="features">
             <div class="feature">Valid for 24 hours</div>
@@ -297,17 +304,30 @@
 
 <script>
     function continueToStep() {
+        const btn = document.getElementById('continueBtn');
+        btn.disabled = true;
+        btn.innerText = 'REDIRECTING...';
 
-        sessionStorage.setItem('returnUrl', window.location.href);
-        const vpLinkUrl = 'https://vplink.in/Ninjaplus69';
+        const vpLinkUrl = 'https://vplink.in/A02VNQ?source=official';
         
-        window.location.href = vpLinkUrl;
+        setTimeout(() => {
+            window.location.href = vpLinkUrl;
+        }, 500);
     }
 
     window.addEventListener('focus', () => {
-        const returnUrl = sessionStorage.getItem('returnUrl');
-        if (returnUrl && document.hidden === false) {
-            console.log('User returned from VPLink, ready to redirect to index.html');
+        const btn = document.getElementById('continueBtn');
+        if (btn.disabled) {
+            btn.disabled = false;
+            btn.innerText = 'CONTINUE TO STEP →';
+        }
+    });
+
+    window.addEventListener('pageshow', (event) => {
+        if (event.persisted) {
+            const btn = document.getElementById('continueBtn');
+            btn.disabled = false;
+            btn.innerText = 'CONTINUE TO STEP →';
         }
     });
 </script>
