@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Get Your Key | NinjaPlus</title>
+    <title>Key Generated | NinjaPlus</title>
     <style>
         :root { 
             --bg: #000000; 
@@ -12,9 +12,8 @@
             --text: #ffffff; 
             --accent: #00FF7F; 
             --accent-muted: #2E7D4F;
-            --warning-bg: #1A1305;
-            --warning-border: #4A3F0F;
-            --warning-text: #FFD700;
+            --error: #FF4455;
+            --bolt: #FFB700;
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -34,11 +33,14 @@
             width: 100%; 
             max-width: 480px;
             text-align: center;
-            animation: fadeIn 0.8s ease-out;
         }
 
-        .header {
-            margin-bottom: 32px;
+        #mainContainer { display: none; }
+        #bypassContainer { display: none; }
+
+        .logo-section {
+            margin-bottom: 28px;
+            animation: fadeInDown 0.6s ease-out;
         }
 
         .logo-circle { 
@@ -48,7 +50,7 @@
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            margin: 0 auto 18px;
+            margin: 0 auto 20px;
             border: 3px solid var(--accent);
             background: transparent;
             overflow: hidden;
@@ -65,7 +67,7 @@
             font-size: 32px; 
             font-weight: bold; 
             color: var(--accent);
-            margin-bottom: 6px;
+            margin-bottom: 6px; 
             letter-spacing: 1px;
         }
 
@@ -74,175 +76,137 @@
             font-size: 12px; 
             letter-spacing: 2px;
             text-transform: uppercase;
-            margin-bottom: 24px; 
+            margin-bottom: 32px; 
         }
 
-        .progress-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            margin-bottom: 28px;
-            padding: 0 16px;
-        }
-
-        .step-indicator{
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            color: var(--accent-muted);
-        }
-
-        .circle{
-            width: 28px;
-            height: 28px;
-            border: 2px solid var(--accent-muted);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 12px;
-            font-weight: bold;
-            background: transparent;
-        }
-
-        .circle.active{
-            border-color: var(--accent);
-            color: var(--accent);
-            background: rgba(0, 255, 127, 0.1);
-            box-shadow: 0 0 15px rgba(0, 255, 127, 0.2);
-        }
-
-        .line{
-            flex-grow: 1;
-            height: 2px;
-            background: var(--accent-muted);
-            margin: 0 8px;
-        }
-
-        .card{
-            background: var(--card-dark);
-            border: 1px solid var(--accent-muted);
-            border-radius: 28px;
-            padding: 32px 26px;
-            text-align: left;
+        .card { 
+            background: var(--card-dark); 
+            border: 1px solid var(--accent-muted); 
+            border-radius: 28px; 
+            padding: 32px 26px; 
+            text-align: left; 
             box-shadow: 0 0 50px rgba(0, 255, 127, 0.08);
+            position: relative;
             margin-bottom: 32px;
         }
 
-        .card h2{
-            font-size: 20px;
+        .card h2 { 
+            font-size: 20px; 
             color: var(--accent);
-            margin-bottom: 14px;
-            font-weight: bold;
+            margin-bottom: 14px; 
+            font-weight: bold; 
+            text-align: center;
         }
 
-        .card-p{
-            color: var(--accent-muted);
-            font-size: 13px;
-            line-height: 1.6;
-            margin-bottom: 24px;
+        .card-p { 
+            color: var(--accent-muted); 
+            font-size: 13px; 
+            line-height: 1.6; 
+            margin-bottom: 22px;
+            text-align: center;
         }
 
-        .features{
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 28px;
+        .key-box { 
+            background: #0A120A; 
+            padding: 20px; 
+            border-radius: 18px; 
+            border: 2px solid var(--accent); 
+            margin-bottom: 22px; 
+            position: relative; 
+            overflow: hidden; 
+            font-family: 'Courier New', monospace;
         }
 
-        .feature{
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            color: var(--accent-muted);
-            font-size: 13px;
-            line-height: 1.5;
+        #finalKey { 
+            color: var(--accent); 
+            font-size: 16px; 
+            font-weight: bold; 
+            letter-spacing: 2px; 
+            word-break: break-all;
         }
 
-        .feature::before{
-            content: "➜";
-            color: var(--accent);
-            font-weight: bold;
-            min-width: 16px;
-            margin-top: 1px;
-        }
-
-        .warning{
-            background: var(--warning-bg);
-            border: 1px solid var(--warning-border);
-            border-radius: 14px;
-            padding: 16px;
-            display: flex;
-            gap: 12px;
-            margin-bottom: 28px;
-        }
-
-        .warning-icon{
-            color: var(--warning-text);
-            font-size: 20px;
-            min-width: 24px;
-        }
-
-        .warning-content{
-            text-align: left;
-        }
-
-        .warning-title{
-            color: var(--warning-text);
-            font-weight: bold;
-            font-size: 13px;
-            margin-bottom: 4px;
-        }
-
-        .warning-text{
-            color: var(--accent-muted);
-            font-size: 12px;
-            line-height: 1.4;
-        }
-        .btn{
-            width: 100%;
-            padding: 16px;
+        .btn { 
+            width: 100%; 
+            padding: 16px; 
             background: var(--accent);
-            color: #001A00;
-            border: none;
-            border-radius: 18px;
-            font-size: 15px;
-            font-weight: bold;
-            cursor: pointer;
+            color: #001A00; 
+            border: none; 
+            border-radius: 18px; 
+            font-size: 15px; 
+            font-weight: bold; 
+            cursor: pointer; 
             transition: 0.3s ease;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        .btn:hover{
+        .btn:hover { 
             transform: scale(1.04);
             box-shadow: 0 0 20px rgba(0, 255, 127, 0.4);
         }
 
         .btn:active { transform: scale(0.98); }
 
-        .footer{
-            margin-top: 32px;
-            color: var(--accent-muted);
-            font-size: 9px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
+        .btn-red { 
+            background: var(--error); 
+            color: white; 
+            margin-top: 16px; 
         }
 
-        @keyframes fadeIn{
-            from { opacity: 0; transform: translateY(20px); }
+        .btn-red:hover {
+            box-shadow: 0 0 20px rgba(255, 68, 85, 0.4);
+        }
+
+        .error-card { 
+            background: #1A0D0D; 
+            border: 2px solid var(--error); 
+            border-radius: 28px; 
+            padding: 40px 28px;
+            box-shadow: 0 0 30px rgba(255, 68, 85, 0.15);
+        }
+
+        .error-icon { 
+            font-size: 48px; 
+            margin-bottom: 18px; 
+        }
+
+        .error-title { 
+            color: var(--error); 
+            font-size: 22px; 
+            font-weight: bold; 
+            margin-bottom: 14px; 
+        }
+
+        .error-card p {
+            color: var(--accent-muted);
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .footer { 
+            margin-top: 40px; 
+            color: var(--accent-muted); 
+            font-size: 9px; 
+            letter-spacing: 2px; 
+            text-transform: uppercase; 
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .card { animation: fadeIn 0.8s ease-out 0.2s both; }
 
-        @media (max-width: 480px){
+        @media (max-width: 480px) {
             h1 { font-size: 28px; }
-            .card { padding: 24px 18px; }
+            .card { padding: 26px 20px; }
             .btn { padding: 14px; font-size: 14px; }
-            .progress-container { gap: 8px; }
         }
     </style>
 </head>
@@ -250,45 +214,36 @@
 
 <div class="container">
     
-    <div class="header">
-        <div class="logo-circle">
-            <img src="./assets/logo.png" alt="NinjaPlus">
-        </div>
-        <h1>NINJAPLUS</h1>
-        <p class="subtitle">GET YOUR KEY</p>
-    </div>
-
-    <div class="progress-container">
-        <div class="step-indicator">
-            <div class="circle active">1</div>
-            <span>STEP 1 OF 1</span>
-        </div>
-        <div class="line"></div>
-        <div class="circle">✓</div>
-    </div>
-
-    <div class="card">
-        <h2>Complete Step 1</h2>
-        <p class="card-p">Click the button below to continue. You'll be redirected and can return to generate your key.</p>
-
-        <div class="features">
-            <div class="feature">Valid for 24 hours</div>
-            <div class="feature">1 verification step</div>
-            <div class="feature">Device-locked key</div>
-            <div class="feature">Auto-saved in app</div>
-        </div>
-
-        <div class="warning">
-            <div class="warning-icon">⚠️</div>
-            <div class="warning-content">
-                <div class="warning-title">Security Notice</div>
-                <div class="warning-text">The use of bots or automation will result in your key being banned.</div>
+    <div id="mainContainer">
+        <div class="logo-section">
+            <div class="logo-circle">
+                <img src="./assets/logo.png" alt="NinjaPlus">
             </div>
+            <h1>NINJAPLUS</h1>
+            <p class="subtitle">ACCESS GRANTED</p>
         </div>
 
-        <button class="btn" id="continueBtn" onclick="continueToStep()">
-            CONTINUE TO STEP →
-        </button>
+        <div class="card">
+            <h2>✓ Key Generated</h2>
+            <p class="card-p">This key is locked to your device. Share it, and it won't work for others.</p>
+
+            <div class="key-box">
+                <span id="finalKey">SECURE FETCHING...</span>
+            </div>
+
+            <button class="btn" id="copyBtn" onclick="copyKey()">
+                COPY TO CLIPBOARD
+            </button>
+        </div>
+    </div>
+
+    <div id="bypassContainer">
+        <div class="error-card">
+            <div class="error-icon">🔐</div>
+            <div class="error-title">Access Denied</div>
+            <p>Direct access is prohibited. Please use the official link to generate your key.</p>
+            <button class="btn btn-red" onclick="location.href='steps.html'">← RETURN</button>
+        </div>
     </div>
 
     <div class="footer">⚡ NINJAPLUS v1.0 ⚡</div>
@@ -296,20 +251,87 @@
 </div>
 
 <script>
-    function continueToStep() {
+    async function checkSecurity() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const source = urlParams.get('source');
+    const referrer = document.referrer;
+    
+    // Logic: Only allow if the source parameter is 'official'
+    // This forces the user to come from your specific link each time.
+    const isAllowed = source === "official";
+    
+    if (isAllowed) {
 
-        sessionStorage.setItem('returnUrl', window.location.href);
-        const vpLinkUrl = 'https://vplink.in/Ninjaplus69';
+        document.getElementById('mainContainer').style.display = "block";
+        document.getElementById('bypassContainer').style.display = "none";
         
-        window.location.href = vpLinkUrl;
+        const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+        window.history.replaceState({}, document.title, cleanUrl);
+        
+        generateLockedKey(); 
+    } else {
+
+        document.getElementById('mainContainer').style.display = "none";
+        document.getElementById('bypassContainer').style.display = "block";
+        
+        document.querySelector('.error-title').innerText = "Bypass Detected";
+        document.querySelector('.error-card p').innerText = "Direct access or refresh is prohibited. Please use the official link to generate your key.";
+    }
+}
+    async function generateLockedKey() {
+        try {
+            const response = await fetch('https://api.ipify.org?format=json');
+            const data = await response.json();
+            const ip = data.ip;
+
+            const day = Math.floor(Date.now() / 86400000);
+            const ipSeed = parseInt(ip.replace(/\./g, '').substring(0, 6)); 
+            let seed = ipSeed + day + 2026; 
+            
+            function rnd() { 
+                var x = Math.sin(seed++) * 10000; 
+                return Math.abs(x - Math.floor(x)); 
+            }
+            
+            const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+            let segments = [];
+            for(let i=0; i<4; i++) {
+                let s = "";
+                for(let j=0; j<4; j++) {
+                    let r = Math.floor(rnd() * chars.length);
+                    s += chars.charAt(r);
+                }
+                segments.push(s);
+            }
+
+            const finalKey = "UKM-" + segments.join("-");
+            document.getElementById('finalKey').innerText = finalKey;
+
+        } catch (err) {
+            document.getElementById('finalKey').innerText = "CONNECT TO INTERNET";
+        }
     }
 
-    window.addEventListener('focus', () => {
-        const returnUrl = sessionStorage.getItem('returnUrl');
-        if (returnUrl && document.hidden === false) {
-            console.log('User returned from VPLink, ready to redirect to index.html');
-        }
-    });
+    function copyKey() {
+        const keyText = document.getElementById('finalKey').innerText;
+        if(keyText.includes("SECURE") || keyText.includes("CONNECT")) return;
+
+        navigator.clipboard.writeText(keyText).then(() => {
+            const btn = document.getElementById('copyBtn');
+            btn.innerText = "✓ COPIED!";
+            btn.style.background = "#00FF7F";
+            btn.style.color = "#001A00";
+            setTimeout(() => { 
+                btn.innerText = "COPY TO CLIPBOARD"; 
+                btn.style.background = "";
+                btn.style.color = "";
+            }, 2000);
+        }).catch(() => {
+            alert("Copy failed. Please try again.");
+        });
+    }
+
+    window.onload = checkSecurity;
 </script>
 
 </body>
