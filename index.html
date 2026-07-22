@@ -240,9 +240,9 @@
     <div id="bypassContainer">
         <div class="error-card">
             <div class="error-icon">🔐</div>
-            <div class="error-title">Bypass Detected</div>
-            <p>Direct access is prohibited. Please use the official VPLink shortener to generate your key.</p>
-            <button class="btn btn-red" onclick="location.href='steps.html'">← RETURN TO STEPS</button>
+            <div class="error-title">Access Denied</div>
+            <p>Direct access is prohibited. Please use the official link to generate your key.</p>
+            <button class="btn btn-red" onclick="location.href='steps.html'">← RETURN</button>
         </div>
     </div>
 
@@ -252,69 +252,73 @@
 
 <script>
     async function checkSecurity() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const source = urlParams.get('source');
+    const urlParams = new URLSearchParams(window.location.search);
+    const source = urlParams.get('source');
+    
+    const savedKey = localStorage.getItem('ninjaplus_key');
+    const expiry = localStorage.getItem('ninjaplus_expiry');
+    const keyValid = savedKey && expiry && Date.now() < parseInt(expiry);
+    
+    const isAllowed = source === "official" || keyValid;
+    
+    if (isAllowed) {
+        document.getElementById('mainContainer').style.display = "block";
+        document.getElementById('bypassContainer').style.display = "none";
         
-        console.log('=== Security Check ===');
-        console.log('Source:', source);
-        console.log('Referrer:', document.referrer);
-        console.log('==================');
-
-        const isAllowed = source === "official";
+        const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+        window.history.replaceState({}, document.title, cleanUrl);
         
-        if (isAllowed) {
-            const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-            window.history.replaceState({}, document.title, cleanUrl);
-            
-            document.getElementById('mainContainer').style.display = "block";
-            document.getElementById('bypassContainer').style.display = "none";
-            
-            generateLockedKey(); 
+        generateLockedKey(); 
+    } else {
+        document.getElementById('mainContainer').style.display = "none";
+        document.getElementById('bypassContainer').style.display = "block";
+        
+        if (expiry && Date.now() >= parseInt(expiry)) {
+            document.querySelector('.error-title').innerText = "Key Expired";
+            document.querySelector('.error-card p').innerText = "Your key has expired after 24 hours. Please use the official link to generate a new key.";
         } else {
-            // BLOCK: Direct access, no VPLink
-            document.getElementById('mainContainer').style.display = "none";
-            document.getElementById('bypassContainer').style.display = "block";
+            document.querySelector('.error-title').innerText = "Bypass Detected";
+            document.querySelector('.error-card p').innerText = "Direct access or refresh is prohibited. Please use the official link to generate your key.";
         }
     }
+}
+async function generateLockedKey() {
+    try {
+        const response = await fetch('https://api.ipify.org?format=json');
+        const data = await response.json();
+        const ip = data.ip;
 
-    async function generateLockedKey() {
-        try {
-            const response = await fetch('https://api.ipify.org?format=json');
-            const data = await response.json();
-            const ip = data.ip;
-
-            const hour = Math.floor(Date.now() / 97200000);
-            const ipSeed = parseInt(ip.replace(/\./g, '').substring(0, 6)); 
-            let seed = ipSeed + hour + 2026; 
-            
-            function rnd() { 
-                var x = Math.sin(seed++) * 10000; 
-                return Math.abs(x - Math.floor(x)); 
-            }
-            
-            const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-            let segments = [];
-            for(let i=0; i<4; i++) {
-                let s = "";
-                for(let j=0; j<4; j++) {
-                    let r = Math.floor(rnd() * chars.length);
-                    s += chars.charAt(r);
-                }
-                segments.push(s);
-            }
-
-            const finalKey = "UKM-" + segments.join("-");
-            document.getElementById('finalKey').innerText = finalKey;
-
-
-            const expiresAt = Date.now() + 172800000;
-            localStorage.setItem('ninjaplus_key', finalKey);
-            localStorage.setItem('ninjaplus_expiry', expiresAt);
-
-        } catch (err) {
-            document.getElementById('finalKey').innerText = "CONNECT TO INTERNET";
+        const day = Math.floor(Date.now() / 86400000);
+        const ipSeed = parseInt(ip.replace(/\./g, '').substring(0, 6)); 
+        let seed = ipSeed + day + 2026; 
+        
+        function rnd() { 
+            var x = Math.sin(seed++) * 10000; 
+            return Math.abs(x - Math.floor(x)); 
         }
+        
+        const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+        let segments = [];
+        for(let i=0; i<4; i++) {
+            let s = "";
+            for(let j=0; j<4; j++) {
+                let r = Math.floor(rnd() * chars.length);
+                s += chars.charAt(r);
+            }
+            segments.push(s);
+        }
+
+        const finalKey = "UKM-" + segments.join("-");
+        document.getElementById('finalKey').innerText = finalKey;
+
+        const expiresAt = Date.now() + 172800000;
+        localStorage.setItem('ninjaplus_key', finalKey);
+        localStorage.setItem('ninjaplus_expiry', expiresAt);
+
+    } catch (err) {
+        document.getElementById('finalKey').innerText = "CONNECT TO INTERNET";
     }
+}
 
     function copyKey() {
         const keyText = document.getElementById('finalKey').innerText;
